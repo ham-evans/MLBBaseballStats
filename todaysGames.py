@@ -14,32 +14,35 @@ def todaysGames ():
     games = []
 
     for i in range(len(gameTables)):
-        game = []
         gameStats = str(gameTables[i].findAll('td')).split(',')
         
         if(i%2 == 0):
-            homeTeamName = gameStats[0][gameStats[0].find('teams/') + 6:gameStats[0].find('/2018')]
-            awayTeamName = gameStats[3][gameStats[3].find('teams/') + 6:gameStats[3].find('/2018')]
+            game = []
+            awayTeamName = gameStats[0][gameStats[0].find('teams/') + 6:gameStats[0].find('/2018')]
+            homeTeamName = gameStats[3][gameStats[3].find('teams/') + 6:gameStats[3].find('/2018')]
             
-            homeTeamRecord = gameStats[0][gameStats[0].find('span') + 24:gameStats[0].find('</span') - 2]
-            awayTeamRecord = gameStats[3][gameStats[3].find('span') + 24:gameStats[3].find('</span') - 2]
-
-            homeTeam = [homeTeamName, homeTeamRecord]
+            awayTeamRecord = gameStats[0][gameStats[0].find('span') + 24:gameStats[0].find('</span') - 2]
+            homeTeamRecord = gameStats[3][gameStats[3].find('span') + 24:gameStats[3].find('</span') - 2]
+            
+            gameUrl = 'https://www.baseball-reference.com/' + str(gameStats[2][gameStats[2].find('/previews'):gameStats[2].find('">Preview')])
+            game.append(gameUrl)
+            
             awayTeam = [awayTeamName, awayTeamRecord]
+            homeTeam = [homeTeamName, homeTeamRecord]
 
         else:
             index2 = 7 # Dealing with case where Home pitcher doesn't have a jersey number yet
             if (len(gameStats) < 12): 
                 index2 = 6
                 
-            homePitcher = gameStats[1][gameStats[1].find('">') + 2:gameStats[1].find('</a>')]
-            awayPitcher = gameStats[index2][gameStats[index2].find('">') + 2:gameStats[index2].find('</a>')]
+            awayPitcher = gameStats[1][gameStats[1].find('">') + 2:gameStats[1].find('</a>')]
+            homePitcher = gameStats[index2][gameStats[index2].find('">') + 2:gameStats[index2].find('</a>')]
 
-            homeTeam.append(homePitcher)
             awayTeam.append(awayPitcher)
+            homeTeam.append(homePitcher)
             
-            homeTeam = pitcherStats(gameStats[1:(index2-1)], homeTeam)
             awayTeam = pitcherStats(gameStats[index2:], awayTeam)
+            homeTeam = pitcherStats(gameStats[1:(index2-1)], homeTeam)
             
             for element in homeTeam: 
                 game.append(element)
@@ -49,13 +52,12 @@ def todaysGames ():
             games.append(game)
 
     games = pd.DataFrame(games)
-    games.columns = ['Home Team', 'Home Record', 'Home Starter', 'HS #', 'HS Age', 'HS Hand', 'HS Record', 'HS ERA', 'Away Team', 'Away Record', 'Away Starter', 'AS #', 'AS Age', 'AS Hand', 'AS Record', 'AS ERA']
+    games.columns = ['Game Url', 'Home Team', 'Home Record', 'Home Starter', 'HS #', 'HS Age', 'HS Hand', 'HS Record', 'HS ERA', 'Away Team', 'Away Record', 'Away Starter', 'AS #', 'AS Age', 'AS Hand', 'AS Record', 'AS ERA']
     
     return games
 
 
 def pitcherStats (gameStats, array):
-    print(len(gameStats))
     if (len(gameStats)<5):
         array.append('None')
     array.append(gameStats[0][gameStats[0].find('(') + 1:])
@@ -69,3 +71,5 @@ def pitcherStats (gameStats, array):
         
     
     return array 
+
+    
