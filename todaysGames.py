@@ -1,8 +1,9 @@
 # Hamilton Evans 
 # 8/6/2018
-# Returns today's games, pitching matchups, and lineups 
+# Returns today's games and pitching matchups
 
 from pullWebData import pullSoup
+from todaysPreviewStats import pullPreviewStats
 import pandas as pd
 
 def todaysGames ():
@@ -56,7 +57,6 @@ def todaysGames ():
     
     return games
 
-
 def pitcherStats (gameStats, array):
     if (len(gameStats)<5):
         array.append('None')
@@ -68,8 +68,12 @@ def pitcherStats (gameStats, array):
         array.append(gameStats[4][gameStats[4].find(' '):gameStats[4].find('</') - 1])
     else: 
         array.append(gameStats[3][gameStats[3].find(' '):gameStats[3].find('</') - 1])
-        
     
     return array 
+
+def matchupURL (i):
+    todaysGamesDF = todaysGames ()
+    return todaysGamesDF.iloc[i, 0]
+
 
     
