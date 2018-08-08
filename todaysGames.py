@@ -75,5 +75,19 @@ def matchupURL (i):
     todaysGamesDF = todaysGames ()
     return todaysGamesDF.iloc[i, 0]
 
+def pullSingleGame (i):
+    url = matchupURL (i)
+    preview = pullPreviewStats (url)
+    return preview
 
+def pullAllGames ():
+    allGames = []
+    today = todaysGames ()
+    for i in range(len(today)): 
+        allGames.append(today.iloc[i])
+        allGames.append(pullSingleGame (i))
+    
+    return allGames
+    
+        
     
